@@ -1,5 +1,8 @@
-<!-- version 4 -->
 # Changelog
+
+The `2.2.1-esp32-enhanced.*` entries are the enhanced Designer edition
+contributed by [pqpxo](https://github.com/pqpxo/marquee-esp32). Earlier entries
+are upstream [Marquee](https://github.com/Jamisonfitz/marquee) by Jamisonfitz.
 
 ## 2.2.1-esp32-enhanced.4 — 2026-08-17
 

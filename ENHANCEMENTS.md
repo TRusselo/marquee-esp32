@@ -1,14 +1,16 @@
-<!-- version 4 -->
-# Marquee ESP32 Enhanced v4
+# Enhanced Designer edition
 
-This package is based on `TRusselo/marquee-esp32` at commit
-`3e02ddc268d6317aefd808caf078d0baa3737c6d`. The fork already incorporates
-upstream Marquee v2.2.1 and adds the optional `marquee-shot` plus ESPHome panel
-workflow. This edition includes the session-aware Design blocks from v1, then
-adds the expanded Designer, custom backdrop, target-display previews, and ESP32
-refresh improvements.
+Version `2.2.1-esp32-enhanced.4` of this repo bundles an **enhanced card
+Designer** and richer media-session data on top of the ESP32/ESPHome fork. The
+enhanced edition was contributed by **[pqpxo](https://github.com/pqpxo/marquee-esp32)**
+and merged here; it builds on upstream [Marquee](https://github.com/Jamisonfitz/marquee)
+v2.2.1 and this fork's `marquee-shot` + ESPHome panel workflow.
 
-## Version 4 Street and logo improvements
+Everything below is **opt-in and backward compatible** — existing
+`settings.json` files, presets, and template appearances are unchanged until you
+add one of the new blocks.
+
+## Street and logo improvements
 
 - Street's rectangle of poster lights and its **NOW PLAYING** sign are now
   independent Design blocks. Select either in the block chips to move, resize,
@@ -17,7 +19,7 @@ refresh improvements.
   transparent padding from clear-logo images in the browser, uses whole-image
   contain by default, and offers fit-to-width, natural-size, and 50–200% zoom
   controls in the Title editor.
-- Existing saved layouts need no conversion. With no v4 overrides, both Street
+- Existing saved layouts need no conversion. With no overrides, both Street
   decorations occupy the exact positions used by the previous baked scene.
 
 ## New Design blocks
@@ -38,7 +40,7 @@ position, width, scale, alignment, font, colour, preset, import, and export
 features. They are off by default, so existing `settings.json` files and
 template appearances remain compatible.
 
-## Version 3 Designer improvements
+## Designer improvements
 
 - The target preview defaults to **800 × 480** for the Elecrow CrowPanel 7.
   Presets cover Google Nest Hub (1024 × 600), Nest Hub Max (1280 × 800),
@@ -50,9 +52,6 @@ template appearances remain compatible.
   the rest of the Street layout.
 - **Credits badge** is now a normal removable/addable Design block. It remains
   content-aware and only appears when a credits-scene tag exists.
-
-## Version 2 Designer improvements
-
 - Viewer, Device, Stream, and Audio & subtitles cards share the same height.
 - Every session card has independent **Panel background** and **Panel border**
   switches. Turning both off leaves its content directly on the card.
@@ -87,32 +86,26 @@ the served design settings. It publishes a fresh `card.jpg` as soon as playback,
 layout, font, panel style, or custom-art version changes. ESPHome's existing
 `ver` polling then downloads the new frame without a firmware change.
 
-The primary `esphome/marquee-crowpanel-shot.yaml` remains compatible. The
-on-device examples that reconstruct a card instead of displaying `card.jpg`
-do not automatically render the new HTML Designer blocks.
+The primary `esphome/marquee-crowpanel-shot.yaml` remains compatible, as does
+the Home-Assistant-controlled `esphome/marquee-elecrow-7.yaml`. The on-device
+examples that reconstruct a card instead of displaying `card.jpg` do not
+automatically render the new HTML Designer blocks.
 
-## Upgrade using Docker Compose
+## Enabling the new blocks
 
-1. Back up the persistent directory mounted at `/config`.
-2. Extract this package and edit `compose.yaml`, especially `PAGE_URL`, media
-   backend address, credentials/defaults, and panel size.
-3. Build both the application and the enhanced sidecar:
+1. Rebuild the app (and, for a panel, the sidecar):
 
-```sh
-# version 4
-docker compose --profile panel up -d --build
-docker compose logs -f marquee marquee-shot
-```
+   ```sh
+   # app only
+   docker compose up -d --build
 
-4. Open the Marquee settings page and add the desired blocks from
+   # app + ESP-panel sidecar
+   docker compose --profile panel up -d --build
+   docker compose logs -f marquee marquee-shot
+   ```
+
+2. Open the Marquee settings page and add the desired blocks from
    **Design → + Add** for each template that should display them.
-
-If the panel profile is not required, start only Marquee with:
-
-```sh
-# version 4
-docker compose up -d --build
-```
 
 ## Backend notes
 
@@ -120,13 +113,13 @@ docker compose up -d --build
 - Emby and Jellyfin use the same normalized shape. Missing `/Sessions` fields
   are omitted rather than guessed.
 - Track labels depend on metadata reported by the playback server and client.
-- Viewer details are exposed through the LAN-hosted `now-playing.json`. Marquee
-  remains intended for a trusted LAN and should not be port-forwarded.
+- Viewer details are exposed through the LAN-hosted `now-playing.json`, and the
+  custom-backdrop upload adds a `POST`/`DELETE /custom-backdrop` endpoint.
+  Marquee is intended for a trusted LAN and should not be port-forwarded.
 
-## Validation commands
+## Validation
 
 ```sh
-# version 4
 python3 cast/cast.py --selftest
 python3 sidecar/shot.py --selftest
 docker compose config

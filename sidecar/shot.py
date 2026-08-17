@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# version 4
 """marquee-shot: screenshot Marquee's card page and serve it as card.jpg.
 
 Pure logic + stdlib only at import time. Playwright is imported lazily inside

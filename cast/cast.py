@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# version 4
 """Marquee — a "now playing" marquee for Google Nest Hubs.
 The whole app in one container: front end + back end.
 

@@ -1,4 +1,3 @@
-<!-- version 4 -->
 # marquee-shot (optional ESP-panel sidecar)
 
 Renders Marquee's real card page to `card.jpg` and serves it, so an ESP32 panel

@@ -116,9 +116,14 @@ logger:
   # bus -> i2c init kills the console. UART0 is the stable, non-conflicting channel.
   hardware_uart: UART0
 
+# Enable Home Assistant API
 api:
+  encryption:
+    key: !secret api_key
+
 ota:
-  - platform: esphome
+  platform: esphome
+  password: !secret ota_password
 
 # Safe mode gives you the "Restart (safe mode)" button below: boots with WiFi +
 # OTA only, so a bad config can be recovered without USB.

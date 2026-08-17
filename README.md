@@ -300,6 +300,12 @@ Marquee stands on generous shoulders:
 - **[TRusselo](https://github.com/TRusselo)** — the Emby & Jellyfin backends,
   session filters and rotation, the dead-card heartbeat, the content filter,
   and a steady stream of sharp fixes.
+- **[pqpxo](https://github.com/pqpxo/marquee-esp32)** — the enhanced Designer
+  edition (`2.2.1-esp32-enhanced.4`): the Viewer/Device/Stream/Active-streams/
+  Audio & subtitles blocks and their Plex+Emby/Jellyfin session backend, custom
+  backdrop uploads, split Category/Title, movable Street decorations, the
+  metadata-aware `marquee-shot` refresh, and the Home-Assistant-controlled panel
+  config. See [ENHANCEMENTS.md](ENHANCEMENTS.md).
 - **[catt](https://github.com/skorokithakis/catt)** by Stavros Korokithakis —
   the casting engine that actually puts the card on your Hub (BSD, bundled
   stock).
