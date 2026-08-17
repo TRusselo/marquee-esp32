@@ -1,8 +1,7 @@
-# version 4
 services:
   marquee:
     build: .
-    image: marquee:esp32-enhanced-v3
+    image: marquee:local
     container_name: marquee
     network_mode: host
     restart: unless-stopped
@@ -28,10 +27,9 @@ services:
   # OPTIONAL ESP-panel sidecar. Renders the real card to card.jpg for an ESP32
   # display. Nest Hub users never need this — it is gated behind the `panel`
   # profile, so a plain `docker compose up` does NOT build or start it.
-  #   panel users:  docker compose --profile panel up -d --build
+  #   panel users:  docker compose --profile panel up -d
   marquee-shot:
-    # Local tag ensures this package's metadata-aware capture logic is used.
-    image: marquee-shot:esp32-enhanced-v3
+    image: ghcr.io/trusselo/marquee-shot:latest   # published add-on; `--build` rebuilds from ./sidecar
     build: ./sidecar
     container_name: marquee-shot
     profiles: ["panel"]
