@@ -1,8 +1,14 @@
 # Changelog
 
-The `2.2.1-esp32-enhanced.*` entries are the enhanced Designer edition
-contributed by [pqpxo](https://github.com/pqpxo/marquee-esp32). Earlier entries
-are upstream [Marquee](https://github.com/Jamisonfitz/marquee) by Jamisonfitz.
+The `*-esp32-enhanced.*` entries are the enhanced Designer edition contributed by
+[pqpxo](https://github.com/pqpxo/marquee-esp32). Other entries are upstream
+[Marquee](https://github.com/Jamisonfitz/marquee) by Jamisonfitz.
+
+## 2.2.2 — 2026-08-18
+
+- **Settings preview no longer flashes blank on load.** While the card iframe
+  boots and paints, the frame shows a subtle shimmer and swaps to the live
+  preview on the real first paint — not just when the iframe reports loaded.
 
 ## 2.2.1-esp32-enhanced.4 — 2026-08-17
 
