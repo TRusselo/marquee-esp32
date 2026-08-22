@@ -461,6 +461,16 @@
               <option value="playfair">Playfair Display</option>
               <option value="cinzel">Cinzel</option>
               <option value="grotesk">Space Grotesk</option>
+              <option value="roboto">Roboto</option>
+              <option value="montserrat">Montserrat</option>
+              <option value="lato">Lato</option>
+              <option value="raleway">Raleway</option>
+              <option value="anton">Anton</option>
+              <option value="orbitron">Orbitron</option>
+              <option value="righteous">Righteous</option>
+              <option value="merriweather">Merriweather</option>
+              <option value="libre">Libre Baskerville</option>
+              <option value="bangers">Bangers</option>
             </select>
           </div>
 
@@ -478,9 +488,53 @@
             </div>
           </div>
 
-          <div id="ctx-title" class="ed-row" hidden>
-            <label for="ck-logo">Use logo art<small>Movie/show logo cutout instead of text title</small></label>
-            <input type="checkbox" class="switch" id="ck-logo" data-k="logo" role="switch">
+          <div id="ctx-title" hidden>
+            <div class="ed-row">
+              <label for="ck-logo">Use logo art<small>Movie/show logo cutout instead of text title</small></label>
+              <input type="checkbox" class="switch" id="ck-logo" data-k="logo" role="switch">
+            </div>
+            <div class="ed-row">
+              <label for="logo-fit">Logo fit<small>Contain keeps the whole logo centered inside the Title box</small></label>
+              <select id="logo-fit" class="mini" data-layout-field="logoFit">
+                <option value="contain">Contain whole logo</option>
+                <option value="width">Fit to width</option>
+                <option value="natural">Natural size</option>
+              </select>
+            </div>
+            <div class="sliders">
+              <div class="slider"><label>Logo zoom <output data-value="logoZoom">100</output>%</label>
+                <input data-layout-field="logoZoom" type="range" min="50" max="200"
+                  step="1" value="100" aria-label="Logo zoom inside the Title block"></div>
+            </div>
+          </div>
+
+          <div id="ctx-session-style" hidden>
+            <div class="ed-row">
+              <label for="panel-background">Panel background<small>Turn off for text and icons directly over the card</small></label>
+              <input type="checkbox" class="switch" id="panel-background"
+                data-layout-toggle="panelBackground" role="switch" checked>
+            </div>
+            <div class="ed-row">
+              <label for="panel-border">Panel border<small>Independent from the panel background</small></label>
+              <input type="checkbox" class="switch" id="panel-border"
+                data-layout-toggle="panelBorder" role="switch" checked>
+            </div>
+          </div>
+
+          <div id="ctx-device" hidden>
+            <div class="ed-row">
+              <label for="ck-device-location">Local / Remote label<small>Show the live connection location reported by the media server</small></label>
+              <input type="checkbox" class="switch" id="ck-device-location"
+                data-k="showDeviceLocation" role="switch" checked>
+            </div>
+          </div>
+
+          <div id="ctx-street" hidden>
+            <div class="ed-row">
+              <label for="ck-street-rain">Rain animation<small>Allow rain and storm particles when Street follows wet weather</small></label>
+              <input type="checkbox" class="switch" id="ck-street-rain"
+                data-k="streetRainAnimation" role="switch" checked>
+            </div>
           </div>
 
           <div id="ctx-clock" hidden>
@@ -571,7 +625,6 @@
           <div id="ctx-meta" class="ed-row" hidden>
             <span class="ed-lab">Included in metadata</span>
             <div class="metachips">
-              <label><input type="checkbox" id="ck-genres" data-k="showGenres"><span>Genres</span></label>
               <label><input type="checkbox" id="ck-mediainfo" data-k="showMediaInfo"><span>Media info</span></label>
               <label><input type="checkbox" id="ck-contentrating" data-k="showContentRating"><span>Rating</span></label>
               <label><input type="checkbox" id="ck-runtime" data-k="showRuntime"><span>Runtime</span></label>
@@ -721,7 +774,8 @@
     titleFont: 'system', clockFormat: '12h', blockLayout: {},
     blockVisibility: {}, presets: [],
     displayWidth: 1280, displayHeight: 800,
-    showWeather: false, weatherFX: true, weatherIntensity: 2 };
+    showWeather: false, weatherFX: true, weatherIntensity: 2,
+    showDeviceLocation: true, streetRainAnimation: true };
   const cardBase = '/image';
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
 
@@ -729,29 +783,40 @@
   // — no shared codegen between the three, same as TEMPLATES already being
   // duplicated across all of them.
   const TEMPLATE_DEFAULT_BLOCKS = {
-    spotlight: ['backdrop', 'clock', 'identity', 'meta', 'plot', 'ratings', 'progress', 'poster'],
-    split: ['backdrop', 'clock', 'identity', 'meta', 'plot', 'ratings', 'progress', 'poster'],
-    hero: ['backdrop', 'clock', 'identity', 'meta', 'ratings', 'progress'],
-    lowerthird: ['backdrop', 'clock', 'identity', 'meta', 'ratings', 'progress'],
+    spotlight: ['backdrop', 'clock', 'category', 'identity', 'meta', 'plot', 'ratings', 'progress', 'poster', 'stinger'],
+    split: ['backdrop', 'clock', 'category', 'identity', 'meta', 'plot', 'ratings', 'progress', 'poster', 'stinger'],
+    hero: ['backdrop', 'clock', 'category', 'identity', 'meta', 'ratings', 'progress', 'stinger'],
+    lowerthird: ['backdrop', 'clock', 'category', 'identity', 'meta', 'ratings', 'progress', 'stinger'],
     bigclock: ['backdrop', 'clock', 'identity', 'progress'],
-    street: ['clock', 'identity', 'meta', 'plot', 'ratings', 'progress', 'poster'],
+    street: ['clock', 'category', 'identity', 'meta', 'plot', 'ratings', 'progress',
+      'streetframe', 'poster', 'nowplaying', 'stinger'],
     fanart: [],
   };
   const BLOCK_LABEL = { backdrop: 'Backdrop', clock: 'Clock', weather: 'Weather',
-    identity: 'Title', meta: 'Metadata', plot: 'Plot', ratings: 'Ratings',
-    progress: 'Progress', poster: 'Poster', stinger: 'Credits badge' };
-  // Chip order fixed per the design handoff. Stinger rides last, unremovable:
-  // it's a content-driven badge, not something adding would ever show.
-  const CHIP_ORDER = ['backdrop', 'clock', 'weather', 'identity', 'meta', 'plot',
-    'ratings', 'progress', 'poster'];
-  const TOGGLEABLE = ['backdrop', 'clock', 'weather', 'identity', 'meta', 'plot',
-    'ratings', 'progress', 'poster'];
+    category: 'Category', identity: 'Title', meta: 'Metadata', plot: 'Plot', ratings: 'Ratings',
+    progress: 'Progress', poster: 'Poster', streetframe: 'Poster lights',
+    nowplaying: 'Now Playing sign', viewer: 'Viewer', device: 'Device',
+    stream: 'Stream', activity: 'Active streams', tracks: 'Audio & subtitles',
+    stinger: 'Credits badge' };
+  // Chip order is the stable Design toolbar order. Credits remains last, but
+  // is now removable and addable wherever Metadata is present.
+  const CHIP_ORDER = ['backdrop', 'clock', 'weather', 'category', 'identity', 'meta', 'plot',
+    'ratings', 'progress', 'streetframe', 'poster', 'nowplaying',
+    'viewer', 'device', 'stream', 'activity',
+    'tracks', 'stinger'];
+  const TOGGLEABLE = ['backdrop', 'clock', 'weather', 'category', 'identity', 'meta', 'plot',
+    'ratings', 'progress', 'streetframe', 'poster', 'nowplaying',
+    'viewer', 'device', 'stream', 'activity',
+    'tracks', 'stinger'];
   // Street's scene IS its backdrop; Fanart's rotating art is too.
   const UNADDABLE = { street: ['backdrop'], fanart: ['backdrop'] };
+  const STREET_ONLY = ['streetframe', 'nowplaying'];
   // Which blocks carry text (get the font select) / take a color at all.
-  const TEXT_BLOCKS = ['clock', 'weather', 'identity', 'meta', 'plot', 'ratings', 'stinger'];
-  const COLORABLE = ['clock', 'weather', 'identity', 'meta', 'plot', 'ratings',
-    'progress', 'poster', 'stinger'];
+  const TEXT_BLOCKS = ['clock', 'weather', 'category', 'identity', 'meta', 'plot', 'ratings',
+    'viewer', 'device', 'stream', 'activity', 'tracks', 'stinger'];
+  const COLORABLE = ['clock', 'weather', 'category', 'identity', 'meta', 'plot', 'ratings',
+    'progress', 'poster', 'streetframe', 'nowplaying', 'viewer', 'device', 'stream',
+    'activity', 'tracks', 'stinger'];
   // Candidate spots for a freshly-added block, cycled by how many are
   // already on the template. Aligned to the editor's 2.5% grid so a fresh
   // add already sits on a line instead of needing an immediate Snap.
@@ -760,6 +825,10 @@
     { x: 5, y: 70, width: 30 }, { x: 65, y: 70, width: 30 },
     { x: 35, y: 37.5, width: 30 },
   ];
+  const SESSION_BLOCKS = ['viewer', 'device', 'stream', 'activity', 'tracks'];
+  const DISPLAY_PRESETS = new Set([
+    '1024x600', '1280x800', '1280x720', '1920x1080', '800x600', '800x480'
+  ]);
 
   let selectedBlock = 'identity';
   // Truth accounting: what the card ACTUALLY rendered last frame (a block can
@@ -831,7 +900,6 @@
       return chip;
     };
     onCard.forEach(name => strip.appendChild(buildChip(name, true)));
-    strip.appendChild(buildChip('stinger', false));
     refreshChipTruth();
     const add = document.createElement('span');
     add.className = 'chip add';
@@ -858,6 +926,8 @@
     if (tray.hidden) return;
     const shown = visibleBlockSet(cfg.template);
     const missing = TOGGLEABLE.filter(n => !shown.has(n)
+      && !(n === 'stinger' && !shown.has('meta'))
+      && !(STREET_ONLY.includes(n) && cfg.template !== 'street')
       && !(UNADDABLE[cfg.template] || []).includes(n));
     tray.innerHTML = '';
     if (!missing.length) {
@@ -889,7 +959,8 @@
     cfg.blockVisibility[tpl] ||= {};
     cfg.blockVisibility[tpl][name] = true;
     cfg.blockLayout[tpl] ||= {};
-    if (name !== 'backdrop' && !cfg.blockLayout[tpl][name]) {
+    const native = new Set(TEMPLATE_DEFAULT_BLOCKS[tpl] || []);
+    if (name !== 'backdrop' && !native.has(name) && !cfg.blockLayout[tpl][name]) {
       cfg.blockLayout[tpl][name] = { ...OPEN_SLOTS[usedCount % OPEN_SLOTS.length] };
     }
     // Weather is the one toggleable block whose data-fetch defaults off —
@@ -925,12 +996,6 @@
       !(TOGGLEABLE.includes(selectedBlock) && visibleBlockSet(cfg.template).has(selectedBlock));
   }
 
-  // Target-display presets: preview the card at the size of the real display
-  // it will run on. Only the settings preview is affected — the card served to
-  // the Hub/panel is responsive and reflows to whatever loads it.
-  const DISPLAY_PRESETS = new Set([
-    '1024x600', '1280x800', '1280x720', '1920x1080', '800x600', '800x480'
-  ]);
   const clampDisplay = (value, low, high, fallback) => {
     const n = Math.round(Number(value));
     return Number.isFinite(n) ? Math.max(low, Math.min(high, n)) : fallback;
@@ -1023,7 +1088,7 @@
     // Fanart starts bare — the art layer is the only thing to edit, so land
     // there instead of on a block that isn't on the card.
     if (cfg.template === 'fanart') selectedBlock = 'backdrop';
-    renderChips(); selectBlock(selectedBlock);
+    renderChips(); showEditorFor(selectedBlock); selectBlock(selectedBlock);
     // Clicking through templates also steps the demo film, so the preview
     // shows the reel instead of one movie forever.
     $('#frame').contentWindow?.postMessage({ type: 'marquee-demo-next' }, location.origin);
@@ -1070,7 +1135,10 @@
     $('#status').textContent = 'ZIP changed — save to apply.';
   });
   document.querySelectorAll('input[data-k]').forEach(i =>
-    i.addEventListener('change', () => { syncFx(); sendCfg(); }));
+    i.addEventListener('change', () => {
+      syncFx(); sendCfg();
+    }));
+
   // Weather condition preview — forces the card's look for testing, exactly
   // like ?wx=/?day=, and never touches cfg. 'Live' hands back to reality.
   const wxPreview = { wx: '', day: '' };
@@ -1136,6 +1204,9 @@
     const faCtx = name === 'backdrop' && cfg.template === 'fanart';
     $('#ed-title').textContent = 'Editing: ' + (faCtx ? 'Fanart' : (BLOCK_LABEL[name] || name));
     $('#ctx-fanart').hidden = !faCtx;
+    $('#ctx-session-style').hidden = !SESSION_BLOCKS.includes(name);
+    $('#ctx-device').hidden = name !== 'device';
+    $('#ctx-street').hidden = cfg.template !== 'street';
     if (faCtx) $('#fanart-key-note').hidden = !!cfg.fanartKeySet;
     $('#ctx-title').hidden = name !== 'identity';
     $('#ctx-clock').hidden = name !== 'clock';
@@ -1214,6 +1285,8 @@
     if (x.clockFormat) { cfg.clockFormat = x.clockFormat; segSet('clockfmt', x.clockFormat); }
     if ('clockSeconds' in x) { cfg.clockSeconds = x.clockSeconds; const el = document.getElementById('ck-clocksec'); if (el) el.checked = x.clockSeconds; }
     if ('weatherFX' in x) { cfg.weatherFX = x.weatherFX; const el = document.getElementById('ck-weatherfx'); if (el) el.checked = x.weatherFX; syncFx(); }
+    if ('streetRainAnimation' in x) { cfg.streetRainAnimation = x.streetRainAnimation; $('#ck-street-rain').checked = x.streetRainAnimation; }
+    if ('showDeviceLocation' in x) { cfg.showDeviceLocation = x.showDeviceLocation; $('#ck-device-location').checked = x.showDeviceLocation; }
     if (x.weatherIntensity) { cfg.weatherIntensity = x.weatherIntensity; $('#wxintensity').value = String(x.weatherIntensity); }
     if (x.weatherUnits) { cfg.weatherUnits = x.weatherUnits; segSet('unitfmt', x.weatherUnits); }
     if (x.fanartType) { cfg.fanartType = x.fanartType; $('#fatype').value = x.fanartType; }
@@ -1254,6 +1327,8 @@
       extras: { clockFormat: cfg.clockFormat || '12h',
         clockSeconds: cfg.clockSeconds === true,
         weatherFX: cfg.weatherFX !== false,
+        streetRainAnimation: cfg.streetRainAnimation !== false,
+        showDeviceLocation: cfg.showDeviceLocation !== false,
         weatherIntensity: cfg.weatherIntensity || 2,
         weatherUnits: cfg.weatherUnits || 'f',
         fanartType: cfg.fanartType || 'background',
@@ -1363,7 +1438,7 @@
     { s: '#carousel', t: 'Pick a template',
       b: 'Tap a card to change the whole layout. Your saved presets ride here too — "+ Save preset" backs up the current look.' },
     { s: '.frame-box', t: 'This is your card',
-      b: 'Choose the target display size above it. Every change previews instantly — tap any block on the card to select it, drag to move it.' },
+      b: 'Choose the target display size above it. Every change previews instantly; tap any block to select it and drag to move it.' },
     { s: '#chips', t: 'Blocks on the card',
       b: 'Tap a chip to edit that block, × to take it off the card, and "+ Add" brings anything back.' },
     { s: '#editor', t: 'Make it yours',
@@ -1539,7 +1614,6 @@
     try {
       const s = await (await fetch('/settings.json')).json();
       cfg = { ...cfg, ...s };
-      syncDisplayControls();
     } catch (e) {}
     try {
       // Container-level defaults (allowlisted server-side). Shown as greyed
@@ -1576,7 +1650,7 @@
     segSet('unitfmt', cfg.weatherUnits || 'f');
     segSet('clockfmt', cfg.clockFormat || '12h');
     cfg.blockLayout ||= {}; cfg.blockVisibility ||= {}; cfg.presets ||= [];
-    syncFx();
+    syncFx(); syncDisplayControls();
     markTemplates(); renderChips(); renderPresets();
     showEditorFor(selectedBlock);
     loadFrame();
@@ -1626,6 +1700,10 @@
         const out = document.querySelector(`[data-value="${field}"]`);
         if (out) out.value = value;
       });
+      document.querySelectorAll('[data-layout-toggle]').forEach(input => {
+        const value = (msg.values || {})[input.dataset.layoutToggle];
+        input.checked = value !== false;
+      });
       markSwatches((msg.values || {}).color || '');
       // '' = template default: no Justify button lit until one is chosen.
       segSet('align', (msg.values || {}).align || '');
@@ -1644,8 +1722,15 @@
       const out = document.querySelector(`[data-value="${field}"]`);
       if (out) out.value = input.value;
       $('#frame').contentWindow.postMessage({ type: 'marquee-set',
-        field, value: ['font', 'color'].includes(field) ? input.value : Number(input.value) },
+        field, value: ['font', 'color', 'logoFit'].includes(field)
+          ? input.value : Number(input.value) },
         location.origin);
+    }));
+  document.querySelectorAll('[data-layout-toggle]').forEach(input =>
+    input.addEventListener('change', () => {
+      $('#frame').contentWindow.postMessage({ type: 'marquee-set',
+        field: input.dataset.layoutToggle, value: input.checked }, location.origin);
+      $('#status').textContent = 'Panel styling changed — save to apply.';
     }));
   $('#snap').addEventListener('click', () =>
     $('#frame').contentWindow.postMessage({ type: 'marquee-snap' }, location.origin));
