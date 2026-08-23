@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.4.0 — 2026-08-23
+
+- **New: persistent custom backdrop.** Upload your own image (JPEG/PNG/WebP, up
+  to 15 MB) to replace the movie/show backdrop, from the Backdrop block editor.
+  Fit (cover/contain/stretch), 50–300% zoom, horizontal/vertical focus, opacity,
+  blur, and brightness. Off until you upload; the image is stored on the config
+  volume and never included in shared or exported looks. Feature by @pqpxo,
+  submitted and reviewed by @TRusselo.
+
 ## 2.3.0 — 2026-08-23
 
 - **New: session blocks.** Optional Viewer, Device, Stream, Active streams, and
