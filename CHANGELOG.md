@@ -1,5 +1,25 @@
 # Changelog
 
+## 2.3.0 — 2026-08-23
+
+- **New: session blocks.** Optional Viewer, Device, Stream, Active streams, and
+  Audio & subtitles blocks — show who's watching, what they're playing on, the
+  playback path (Direct Play / Direct Stream / Transcoding) with resolution, HDR
+  and codecs, the server-wide stream count, and the selected audio/subtitle
+  tracks. All off by default; add the ones you want from Design → + Add. Works on
+  Plex, Emby, and Jellyfin — fields a server doesn't report are simply left off.
+- **New: Category is its own block.** Genres split out of the title so you can
+  move, size, colour, and font them independently.
+- **New: movable Street decorations.** The bulb-lit poster frame and the NOW
+  PLAYING sign are now independent blocks you can reposition and resize; rain
+  animation gets its own toggle, and the Credits badge is a normal add/removable
+  block.
+- **New: better title logos.** A bounded, centered logo viewport with
+  transparent-padding trim, contain/width/natural fit, and 50–200% zoom — plus
+  ten more title fonts.
+
+Thanks to [@TRusselo](https://github.com/TRusselo) (#42).
+
 ## 2.2.3 — 2026-08-21
 
 - **Preview at your display's real size.** A "Target display" picker above the
