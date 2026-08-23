@@ -993,6 +993,10 @@ ${chase.join('')}
     if (img.dataset.logoTrimmed === '1' || !img.naturalWidth || !img.naturalHeight) return;
     img.dataset.logoTrimmed = '1';
     const source = img.dataset.logoSource || img.src;
+    // SVG logos are vector art with unreliable intrinsic size (a viewBox-only SVG
+    // rasterises at Chrome's 300px default, so the alpha-scan crops real content).
+    // CSS contain + center already fits them, so skip the raster whitespace trim.
+    if (/^data:image\/svg|\.svg(?:$|[?#])/i.test(source)) { rememberLogo(source, source); return; }
     try {
       const maxScan = 512;
       const ratio = Math.min(1, maxScan / Math.max(img.naturalWidth, img.naturalHeight));
