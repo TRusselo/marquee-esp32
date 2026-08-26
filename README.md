@@ -19,7 +19,6 @@ Marquee turns a Google Nest Hub into a clean now-playing display for Plex, Emby,
 > - **`marquee-shot` sidecar** — a small container that renders Marquee's real card with headless Chromium and serves it as a flat image, so the panel shows the **pixel-perfect** card. Published at `ghcr.io/trusselo/marquee-shot`. → **[sidecar/README.md](sidecar/README.md)**
 > - **ESPHome panel configs** — the CrowPanel screenshot-mode config, plus on-device (no-sidecar) example configs that reconstruct the card on the ESP. → **[esphome/README.md](esphome/README.md)**
 > - **Enable it** per platform: an Unraid Community Applications template ([`unraid/marquee-shot.xml`](unraid/marquee-shot.xml)), a plain `docker run`, or the Compose `panel` profile. **[sidecar/README.md](sidecar/README.md)**
-> - **Enhanced Designer** (`2.2.1-esp32-enhanced.4`) — new opt-in session/playback blocks, custom backdrop uploads, split Category/Title, target-display presets, and a Home-Assistant-controlled panel config. → **[Enhanced Designer features](#enhanced-designer-features)** · full notes in **[ENHANCEMENTS.md](ENHANCEMENTS.md)** / **[CHANGELOG.md](CHANGELOG.md)**
 >
 > Everything else in this README is upstream Marquee, unchanged — run it exactly as documented below and add the panel on top.
 
@@ -90,51 +89,6 @@ you're looking at.
   when multiple sessions play.
 - A six-step guided tour on first run; settings persist in `/config`;
   `/healthz` for monitoring.
-
-## Enhanced Designer features
-
-The enhanced edition (`2.2.1-esp32-enhanced.4`) extends the card Designer and the
-media backends. Everything here is **opt-in and backward compatible** — existing
-`settings.json` files and presets keep their current look until you add a new
-block. Full notes: **[ENHANCEMENTS.md](ENHANCEMENTS.md)** · **[CHANGELOG.md](CHANGELOG.md)**.
-
-**New session & playback blocks** (Design → **+ Add**, off by default). Data
-availability depends on the server/client — Plex reports the most; Emby/Jellyfin
-fields show when their Sessions API supplies them, never guessed.
-
-| Block | Shows |
-|---|---|
-| **Viewer** | Active username and rotation position (e.g. `2 of 3`) |
-| **Device** | Player/client, platform, and an optional **Local**/**Remote** label |
-| **Stream** | Direct Play / Direct Stream / Transcoding, source/output resolution, HDR/Dolby Vision, codecs, bitrate/bandwidth, hardware acceleration |
-| **Active streams** | Server-wide count of movie/episode streams in progress |
-| **Audio & subtitles** | Selected track language, codec, channels/layout, display title, Atmos where reported |
-
-- **Custom backdrop uploads** — upload a persistent JPEG/PNG/WebP (≤15 MB, stored
-  at `/config/custom-backdrop.img`) with cover/contain/stretch, zoom, focus,
-  opacity, blur, and brightness. Excluded from shared looks/presets.
-- **Separate Category & Title blocks** — genres and title move, size, colour, and
-  font independently.
-- **Improved title logos** — bounded, centred viewport with transparent-padding
-  trim, contain / fit-to-width / natural modes, and 50–200% zoom.
-- **Movable Street decorations** — the bulb-lit **Poster lights** frame and the
-  **NOW PLAYING sign** are now independent blocks; rain animation has its own
-  switch. Old layouts inherit the original positions.
-- **Credits badge** is a normal add/removable block; **fifteen named fonts** plus
-  the theme default; **target-display presets** (CrowPanel **800×480** default,
-  Nest Hub/Max, 16:9, 4:3, and custom 320×240–3840×2160).
-
-**Panel refresh:** `marquee-shot` now fingerprints session/stream/track and saved
-design changes (via `/settings.json`), so the ESP32 panel re-renders on a new
-viewer, a transcode switch, a subtitle toggle, or a layout edit — not just on a
-title change. See also the Home-Assistant-controlled panel config
-[`esphome/marquee-elecrow-7.yaml`](esphome/marquee-elecrow-7.yaml) (brightness,
-screensaver, wake/refresh/safe-mode buttons, all persisted).
-
-> **Privacy note:** the session blocks put viewer usernames, device names, and
-> stream details into the LAN-served `now-playing.json`, and custom-backdrop
-> upload adds a `POST`/`DELETE /custom-backdrop` endpoint. Marquee is built for a
-> trusted LAN and should not be port-forwarded.
 
 ## What You Need
 
@@ -299,13 +253,7 @@ Marquee stands on generous shoulders:
 
 - **[TRusselo](https://github.com/TRusselo)** — the Emby & Jellyfin backends,
   session filters and rotation, the dead-card heartbeat, the content filter,
-  and a steady stream of sharp fixes.
-- **[pqpxo](https://github.com/pqpxo/marquee-esp32)** — the enhanced Designer
-  edition (`2.2.1-esp32-enhanced.4`): the Viewer/Device/Stream/Active-streams/
-  Audio & subtitles blocks and their Plex+Emby/Jellyfin session backend, custom
-  backdrop uploads, split Category/Title, movable Street decorations, the
-  metadata-aware `marquee-shot` refresh, and the Home-Assistant-controlled panel
-  config. See [ENHANCEMENTS.md](ENHANCEMENTS.md).
+  target-display preview presets, and a steady stream of sharp fixes.
 - **[catt](https://github.com/skorokithakis/catt)** by Stavros Korokithakis —
   the casting engine that actually puts the card on your Hub (BSD, bundled
   stock).

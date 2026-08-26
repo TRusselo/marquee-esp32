@@ -1,58 +1,63 @@
 # Changelog
 
-The `*-esp32-enhanced.*` entries are the enhanced Designer edition contributed by
-[pqpxo](https://github.com/pqpxo/marquee-esp32). Other entries are upstream
-[Marquee](https://github.com/Jamisonfitz/marquee) by Jamisonfitz.
+## 2.4.1 — 2026-08-25
+
+- **Clearer logs.** Connection problems now say what's actually wrong and where —
+  e.g. "can't reach plex at http://…:32400 — connection refused (is it
+  running?)" instead of a raw errno — and they're colour-coded. Repeated
+  failures collapse to a single line and print a "recovered" note when the server
+  comes back, instead of spamming the log every few seconds.
+- **Fix: metadata no longer refetched constantly** when two people stream at
+  once — the per-title cache kept only one title, so rotation re-pulled art and
+  ratings on every flip.
+- **Fix: a blocked title no longer hides the other stream.** With a do-not-cast
+  filter set and two people watching, a blocked title could blank the whole card;
+  now it just skips that title.
+- **Fix: false "Atmos" badge** on audio tracks whose name merely contained
+  "atmos".
+
+## 2.4.0 — 2026-08-23
+
+- **New: persistent custom backdrop.** Upload your own image (JPEG/PNG/WebP, up
+  to 15 MB) to replace the movie/show backdrop, from the Backdrop block editor.
+  Fit (cover/contain/stretch), 50–300% zoom, horizontal/vertical focus, opacity,
+  blur, and brightness. Off until you upload; the image is stored on the config
+  volume and never included in shared or exported looks. Feature by @pqpxo,
+  submitted and reviewed by @TRusselo.
+
+## 2.3.0 — 2026-08-23
+
+- **New: session blocks.** Optional Viewer, Device, Stream, Active streams, and
+  Audio & subtitles blocks — show who's watching, what they're playing on, the
+  playback path (Direct Play / Direct Stream / Transcoding) with resolution, HDR
+  and codecs, the server-wide stream count, and the selected audio/subtitle
+  tracks. All off by default; add the ones you want from Design → + Add. Works on
+  Plex, Emby, and Jellyfin — fields a server doesn't report are simply left off.
+- **New: Category is its own block.** Genres split out of the title so you can
+  move, size, colour, and font them independently.
+- **New: movable Street decorations.** The bulb-lit poster frame and the NOW
+  PLAYING sign are now independent blocks you can reposition and resize; rain
+  animation gets its own toggle, and the Credits badge is a normal add/removable
+  block.
+- **New: better title logos.** A bounded, centered logo viewport with
+  transparent-padding trim, contain/width/natural fit, and 50–200% zoom — plus
+  ten more title fonts.
+
+Thanks to [@TRusselo](https://github.com/TRusselo) (#42).
+
+## 2.2.3 — 2026-08-21
+
+- **Preview at your display's real size.** A "Target display" picker above the
+  settings preview sizes the card to the screen it'll actually run on — Nest Hub,
+  Nest Hub Max, HD, Full HD, 4:3, a small panel, or a custom size — so what you
+  design is what you'll see on the Hub. Preview-only; the card served stays
+  responsive. Thanks to [@TRusselo](https://github.com/TRusselo) (#41).
 
 ## 2.2.2 — 2026-08-18
 
 - **Settings preview no longer flashes blank on load.** While the card iframe
   boots and paints, the frame shows a subtle shimmer and swaps to the live
   preview on the real first paint — not just when the iframe reports loaded.
-
-## 2.2.1-esp32-enhanced.4 — 2026-08-17
-
-- Split Street's bulb-lit poster frame and NOW PLAYING sign out of the baked
-  scene so each can be moved, resized, scaled, recoloured, removed, and added
-  independently in Design while preserving the original default composition.
-- Added a bounded, centered title-logo viewport with automatic transparent-edge
-  trimming, contain/width/natural fit modes, and a 50–200% logo zoom control.
-- Kept existing Street layouts migration-free: older settings inherit the new
-  movable decorations at their original positions.
-
-## 2.2.1-esp32-enhanced.3 — 2026-08-17
-
-- Added target-display preview sizes with CrowPanel 800×480 as the default,
-  presets for Google Nest Hub and Nest Hub Max, common 16:9/4:3 sizes, and
-  validated custom dimensions.
-- Added an option to show or hide the Device block's live Local/Remote label.
-- Added an opt-in Active streams block backed by the media server's current
-  movie/episode session count.
-- Added a dedicated Street rain/storm animation switch.
-- Made Credits Badge removable and addable through the standard Design chips.
-
-## 2.2.1-esp32-enhanced.2 — 2026-08-16
-
-- Standardized Viewer, Device, Stream, and Audio & subtitles cards to the same
-  height, with independent per-block background and border switches.
-- Split the former composite Title block into separately movable Category and
-  Title blocks while retaining title-logo behaviour and old settings migration.
-- Expanded the per-block font picker to fifteen named fonts plus theme default.
-- Added persistent custom-backdrop upload with cover/contain/stretch, zoom,
-  horizontal/vertical focus, opacity, blur, and brightness controls.
-- Updated `marquee-shot` to refresh immediately after any saved design or
-  custom-backdrop change, as well as playback/session changes.
-
-## 2.2.1-esp32-enhanced.1 — 2026-08-16
-
-- Added opt-in Viewer, Device, Stream, and Audio & subtitles Designer blocks.
-- Normalized Plex, Emby, and Jellyfin session, playback-path, HDR, bitrate,
-  audio, and subtitle data into the shared `now-playing.json` payload.
-- Added eligible-session position/count so a card can show which viewer is
-  currently selected during rotation.
-- Updated `marquee-shot` to capture immediately when viewer, device, stream,
-  or track metadata changes, so ESPHome panels do not show stale details.
-- Preserved the ESP32 fork's panel-sized backdrop and logo image variants.
 
 ## 2.2.1 — 2026-08-02
 

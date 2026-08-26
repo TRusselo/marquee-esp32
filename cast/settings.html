@@ -117,12 +117,12 @@
   .display-custom input { width: 82px; }
   .display-times { color: var(--mut); padding-bottom: 9px; }
   .display-size-note { color: var(--mut); font-size: 12px; padding-bottom: 10px; }
-  .frame-box { width: 100%; max-width: 1000px; aspect-ratio: 5 / 3; position: relative;
+  .frame-box { width: 100%; max-width: 1000px; aspect-ratio: 16 / 10; position: relative;
     border: 2px solid #1D2229; border-radius: 12px; overflow: hidden;
     background: #07090C;
     box-shadow: 0 0 0 1px #060809, 0 18px 44px -18px rgba(0,0,0,.85),
       0 10px 60px -12px rgba(229,168,59,.14); }
-  .frame-box iframe { width: 800px; height: 480px; border: 0; transform-origin: 0 0; }
+  .frame-box iframe { width: 1280px; height: 800px; border: 0; transform-origin: 0 0; }
   /* Card preview loads async (iframe doc + postMessage cfg) — a blank box for ~2s
      reads as broken given "always see the preview" is the whole point. */
   .frame-box.loading iframe { opacity: 0; }
@@ -422,25 +422,25 @@
         <div class="display-toolbar" aria-label="Target display preview size">
           <label for="display-preset">Target display
             <select id="display-preset">
-              <option value="800x480">CrowPanel 7 — 800 × 480 (default)</option>
               <option value="1024x600">Google Nest Hub — 1024 × 600</option>
-              <option value="1280x800">Google Nest Hub Max — 1280 × 800</option>
+              <option value="1280x800" selected>Google Nest Hub Max — 1280 × 800</option>
               <option value="1280x720">HD 16:9 — 1280 × 720</option>
               <option value="1920x1080">Full HD 16:9 — 1920 × 1080</option>
-              <option value="800x600">4:3 display — 800 × 600</option>
+              <option value="800x600">4:3 — 800 × 600</option>
+              <option value="800x480">Small panel — 800 × 480</option>
               <option value="custom">Custom size</option>
             </select>
           </label>
           <div class="display-custom" id="display-custom" hidden>
             <label for="display-width">Width
-              <input id="display-width" type="number" min="320" max="3840" step="1" value="800">
+              <input id="display-width" type="number" min="320" max="3840" step="1" value="1280">
             </label>
             <span class="display-times" aria-hidden="true">×</span>
             <label for="display-height">Height
-              <input id="display-height" type="number" min="240" max="2160" step="1" value="480">
+              <input id="display-height" type="number" min="240" max="2160" step="1" value="800">
             </label>
           </div>
-          <span class="display-size-note" id="display-size-note">Previewing 800 × 480 · 5:3</span>
+          <span class="display-size-note" id="display-size-note">Previewing 1280 × 800 · 16:10</span>
         </div>
         <div class="frame-box"><iframe id="frame" title="Live card preview" tabindex="-1"></iframe></div>
         <p class="side-sub">Demo data — every change previews instantly; tap any block
@@ -817,7 +817,7 @@
   let cfg = { hubIp: '', template: 'spotlight', theme: 'amber', accent: '',
     titleFont: 'system', clockFormat: '12h', blockLayout: {},
     blockVisibility: {}, presets: [],
-    displayWidth: 800, displayHeight: 480,
+    displayWidth: 1280, displayHeight: 800,
     showWeather: false, weatherFX: true, weatherIntensity: 2,
     showDeviceLocation: true, streetRainAnimation: true,
     customBackdropEnabled: false, customBackdropAvailable: false,
@@ -875,7 +875,7 @@
   ];
   const SESSION_BLOCKS = ['viewer', 'device', 'stream', 'activity', 'tracks'];
   const DISPLAY_PRESETS = new Set([
-    '800x480', '1024x600', '1280x800', '1280x720', '1920x1080', '800x600'
+    '1024x600', '1280x800', '1280x720', '1920x1080', '800x600', '800x480'
   ]);
 
   let selectedBlock = 'identity';
@@ -1050,8 +1050,8 @@
   };
   function targetDisplay() {
     return {
-      width: clampDisplay(cfg.displayWidth, 320, 3840, 800),
-      height: clampDisplay(cfg.displayHeight, 240, 2160, 480),
+      width: clampDisplay(cfg.displayWidth, 320, 3840, 1280),
+      height: clampDisplay(cfg.displayHeight, 240, 2160, 800),
     };
   }
   function ratioLabel(width, height) {
@@ -1098,8 +1098,8 @@
   });
   ['display-width', 'display-height'].forEach(id =>
     $('#' + id).addEventListener('input', () => {
-      cfg.displayWidth = clampDisplay($('#display-width').value, 320, 3840, cfg.displayWidth || 800);
-      cfg.displayHeight = clampDisplay($('#display-height').value, 240, 2160, cfg.displayHeight || 480);
+      cfg.displayWidth = clampDisplay($('#display-width').value, 320, 3840, cfg.displayWidth || 1280);
+      cfg.displayHeight = clampDisplay($('#display-height').value, 240, 2160, cfg.displayHeight || 800);
       scaleFrame(); sendCfg();
       $('#status').textContent = 'Custom display size changed — save to keep it.';
     }));
